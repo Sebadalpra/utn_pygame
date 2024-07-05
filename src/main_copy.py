@@ -1,6 +1,7 @@
 import pygame
 from settings import *
-from personaje import *
+from paquete.clases import *
+from random import randint
 
 # Inicializacion
 pygame.init()
@@ -13,10 +14,13 @@ background_rect = background_image.get_rect()
 
 pygame.display.set_caption("Defiende el Universo!")
 
-# Representar y oordenadas del jugador
+# Representar y coordenadas de clases
 planet = Planet(WIDTH // 2 - 125, HEIGHT // 2 - 125)
 player = Player(WIDTH // 2 - 30, 500)
 enemy = Enemy(WIDTH // 2 - 30, HEIGHT // 2 - 30)
+bullet = Bullet(WIDTH // 2 - 30, 500)
+
+
 
 # Bucle
 is_running = True
@@ -27,6 +31,9 @@ while is_running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             is_running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                player.shoot()
 
     # Mover player
     keys = pygame.key.get_pressed()
@@ -49,6 +56,20 @@ while is_running:
     if player.y + player.height > HEIGHT:
         player.y = HEIGHT - player.height
 
+    # Balas
+    for bullet in player.bullets[:]:  # Iterar sobre una copia de la lista de balas
+        bullet.move()  # Mover cada bala hacia arriba
+        if bullet.y < 0:  # Si la bala sale de la pantalla (y < 0)
+            player.bullets.remove(bullet)  # Eliminar la bala de la lista original
+        print(player.bullets)
+
+
+    # -------------- Enemys -----------------------
+    def alien_generator():
+        for alien in enemy.enemy_list:
+            alien.append(enemy.draw())
+
+
     # -------------- Mostrar elementos ------------
     # Dibujar fondo
     SCREEN.blit(background_image, background_rect)
@@ -59,12 +80,8 @@ while is_running:
 
     player.draw()
 
-    enemy.draw()
 
-
-
-
-
+    alien_generator()
     # Actualizar pantalla
     pygame.display.flip()
 

@@ -54,7 +54,7 @@ def generate_alien():
     aliens.append([WIDTH // 2, HEIGHT // 2, angle])
 
 # Bucle principal
-running = True
+running = True 
 clock = pygame.time.Clock()
 while running:
     for event in pygame.event.get():
@@ -65,15 +65,7 @@ while running:
                 shoot(player_pos[0], player_pos[1])
 
     # Mover jugador
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and player_pos[0] > 0:
-        player_pos[0] -= player_speed
-    if keys[pygame.K_RIGHT] and player_pos[0] < WIDTH:
-        player_pos[0] += player_speed
-    if keys[pygame.K_UP] and player_pos[1] > 0:
-        player_pos[1] -= player_speed
-    if keys[pygame.K_DOWN] and player_pos[1] < HEIGHT:
-        player_pos[1] += player_speed
+
 
     # Mover balas
     for bullet in bullets:

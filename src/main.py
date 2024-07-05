@@ -1,69 +1,96 @@
 import pygame
 from settings import *
-from personaje import *
+from paquete.clases import *
+import random
 
-# Inicializacion de modulos de pygame
-# hace que pygame se conecte con el hardware (placa de video, ram etc)
-pygame.init()   
+# Inicializacion
+pygame.init()
 
+# Configuracion pantalla
+SCREEN = pygame.display.set_mode(SIZE_SCREEN)
 
-# El modulo display de pygame nos crea una pantalla
-SCREEN = pygame.display.set_mode((SIZE_SCREEN))
+background_image = pygame.image.load("./img/fondo.jpg").convert()
+background_rect = background_image.get_rect()
+
 pygame.display.set_caption("Defiende el Universo!")
 
+# Representar y coordenadas de clases
+planet = Planet(WIDTH // 2 - 125, HEIGHT // 2 - 125)
+player = Player(WIDTH // 2 - 30, 500)
 
+enemies = []
 
-# desenpaquetar nombre y valor en dos variables distintas:
+# Función para generar enemigos
+def generate_enemy():
+    x = planet.x + planet.width // 2
+    y = planet.y + planet.height // 2
+    angle = random.uniform(0, 2 * math.pi)
+    direction = (math.cos(angle), math.sin(angle))
+    enemy = Enemy(x, y, direction)
+    enemies.append(enemy)
 
-
-# Bucle -> ya que un juego muestra 60 veces por segundo una pantalla
-    # Relevar eventos (los eventos son cosas q suceden en la app)
-    # Analizar eventos
-    # Actualizar elementos del juego
-    # Dibujar pantalla
-    # Actualizar pantalla
-# Vuelve a empezar el bucle
-
+# Bucle principal
 is_running = True
-
+clock = pygame.time.Clock()
 while is_running:
-    # los eventos son cosas q suceden en la app. Ej: evento quit es para salir de la app
-    # los eventos en pygame son numeros
+    clock.tick(FPS)
     for event in pygame.event.get():
-    # esto me trae una lista de eventos debo recorrerla con el for
-        # pygame.QUIT me dice que quit es de tipo entero, ya que fue progamada con el numero 256
         if event.type == pygame.QUIT:
-            # me permite salir del programa
             is_running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                player.shoot()
 
-    # Obtener el estado de las teclas
+    # Mover player
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        player_x -= player_speed
+        player.x -= player.speed
     if keys[pygame.K_RIGHT]:
-        player_x += player_speed
+        player.x += player.speed
     if keys[pygame.K_UP]:
-        player_y -= player_speed
+        player.y -= player.speed
     if keys[pygame.K_DOWN]:
-        player_y += player_speed
+        player.y += player.speed
 
-    # Limitar el movimiento del jugador a los bordes de la pantalla
-    player_x = max(0, min(WIDTH - player_width, player_x))
-    player_y = max(0, min(HEIGHT - player_height, player_y))
+    # Ajustar limites de pantalla player
+    if player.x < 0:
+        player.x = 0
+    if player.x + player.width > WIDTH:
+        player.x = WIDTH - player.width
+    if player.y < 0:
+        player.y = 0
+    if player.y + player.height > HEIGHT:
+        player.y = HEIGHT - player.height
 
-    # color de pantalla
-    SCREEN.fill((BLUE))
-    # representar un pj en la pantalla
-    player = pygame.draw.rect(SCREEN, RED, (player))
+    # Generar enemigos cada cierto tiempo
+    if random.randint(0, 100) < 2:  # Aproximadamente 2% de probabilidad por cuadro
+        generate_enemy()
 
-    # Planeta
-    planet = pygame.draw.circle(SCREEN, BLACK, (CENTER_SCREEN), 60)
-    player.center = CENTER_SCREEN
-    
-# previo pinte color en memoria y con el flip lo muestra.
+    # Mover y dibujar enemigos
+    for enemy in enemies:
+        enemy.move()
+        if enemy.x < 0 or enemy.x > WIDTH or enemy.y < 0 or enemy.y > HEIGHT:
+            enemies.remove(enemy)
+
+    # Mover balas
+    for bullet in player.bullets[:]:  # Iterar sobre una copia de la lista de balas
+        bullet.move()  # Mover cada bala hacia arriba
+        if bullet.y < 0:  # Si la bala sale de la pantalla (y < 0)
+            player.bullets.remove(bullet)  # Eliminar la bala de la lista original
+
+    # -------------- Mostrar elementos ------------
+    # Dibujar fondo
+    SCREEN.blit(background_image, background_rect)
+
+    # Dibujar elementos
+    planet.draw()
+    player.draw()
+
+    for enemy in enemies:
+        enemy.draw()
+
+    # Actualizar pantalla
     pygame.display.flip()
 
-    pygame.time.Clock().tick(60)
-
-# Para liberar los recursos termino usando:
+# Para liberar los recursos
 pygame.quit()

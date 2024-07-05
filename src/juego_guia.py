@@ -1,99 +1,149 @@
 import pygame
-import sys
+import random
+import math
 
-# Inicializa Pygame
+# Inicializar Pygame
 pygame.init()
 
-# Configura las dimensiones de la pantalla
-screen_width = 800
-screen_height = 600
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('Pong')
-
 # Colores
-black = (0, 0, 0)
-white = (255, 255, 255)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 
-# Frames per second
-fps = 60
+# Dimensiones de la pantalla
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Defiende el Planeta")
+
+# Planeta
+planet_img = pygame.Surface((50, 50), pygame.SRCALPHA)
+pygame.draw.circle(planet_img, BLUE, (25, 25), 25)
+
+# Jugador
+player_img = pygame.Surface((10, 10), pygame.SRCALPHA)
+pygame.draw.circle(player_img, GREEN, (5, 5), 5)
+player_pos = [WIDTH // 2, HEIGHT - 30]
+player_speed = 5
+player_health = 100
+
+# Alien
+alien_img = pygame.Surface((20, 20), pygame.SRCALPHA)
+pygame.draw.circle(alien_img, RED, (10, 10), 10)
+
+# Balas
+bullet_img = pygame.Surface((5, 5), pygame.SRCALPHA)
+pygame.draw.circle(bullet_img, WHITE, (2, 2), 2)
+bullets = []
+bullet_speed = 7
+
+# Aliens
+aliens = []
+alien_speed = 2
+aliens_killed = 0
+aliens_to_win = 20
+
+# Función para disparar
+def shoot(x, y):
+    bullets.append([x, y])
+
+# Función para generar aliens
+def generate_alien():
+    angle = random.randint(0, 10)
+    aliens.append([WIDTH // 2, HEIGHT // 2, angle])
+
+# Bucle principal
+running = True
 clock = pygame.time.Clock()
-
-class Paddle:
-    def __init__(self, x, y):
-        self.rect = pygame.Rect(x, y, 10, 100)
-
-    def draw(self):
-        pygame.draw.rect(screen, white, self.rect)
-
-    def move(self, y_change):
-        self.rect.y += y_change
-        if self.rect.top < 0:
-            self.rect.top = 0
-        if self.rect.bottom > screen_height:
-            self.rect.bottom = screen_height
-
-class Ball:
-    def __init__(self, x, y):
-        self.rect = pygame.Rect(x, y, 15, 15)
-        self.x_velocity = 5
-        self.y_velocity = 5
-
-    def draw(self):
-        pygame.draw.rect(screen, white, self.rect)
-
-    def move(self):
-        self.rect.x += self.x_velocity
-        self.rect.y += self.y_velocity
-
-        if self.rect.top < 0 or self.rect.bottom > screen_height:
-            self.y_velocity *= -1
-
-        if self.rect.left < 0 or self.rect.right > screen_width:
-            self.x_velocity *= -1
-
-        if self.rect.colliderect(player_paddle.rect) or self.rect.colliderect(opponent_paddle.rect):
-            self.x_velocity *= -1
-
-# Inicializa los objetos
-player_paddle = Paddle(screen_width - 20, screen_height // 2 - 50)
-opponent_paddle = Paddle(10, screen_height // 2 - 50)
-ball = Ball(screen_width // 2, screen_height // 2)
-
-# Variables de control
-player_speed = 0
-opponent_speed = 5
-
-# Bucle principal del juego
-while True:
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                player_speed = -5
-            if event.key == pygame.K_DOWN:
-                player_speed = 5
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                player_speed = 0
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                shoot(player_pos[0], player_pos[1])
 
-    # Movimiento de las paletas
-    player_paddle.move(player_speed)
+    # Mover jugador
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and player_pos[0] > 0:
+        player_pos[0] -= player_speed
+    if keys[pygame.K_RIGHT] and player_pos[0] < WIDTH:
+        player_pos[0] += player_speed
+    if keys[pygame.K_UP] and player_pos[1] > 0:
+        player_pos[1] -= player_speed
+    if keys[pygame.K_DOWN] and player_pos[1] < HEIGHT:
+        player_pos[1] += player_speed
 
-    if opponent_paddle.rect.top < ball.rect.y:
-        opponent_paddle.move(opponent_speed)
-    if opponent_paddle.rect.bottom > ball.rect.y:
-        opponent_paddle.move(-opponent_speed)
+    # Mover balas
+    for bullet in bullets:
+        bullet[1] -= bullet_speed
+    bullets = [bullet for bullet in bullets if bullet[1] > 0]
 
-    # Movimiento de la pelota
-    ball.move()
+    # Generar aliens
+    if random.randint(1, 30) == 1:  # Incrementa la frecuencia de aparición
+        generate_alien()
 
-    # Dibuja todo en la pantalla
-    screen.fill(black)
-    player_paddle.draw()
-    opponent_paddle.draw()
-    ball.draw()
+    # Mover aliens
+    for alien in aliens:
+        alien[0] += math.cos(alien[2]) * alien_speed
+        alien[1] += math.sin(alien[2]) * alien_speed
+
+    # Colisiones entre balas y aliens
+    for alien in aliens:
+        for bullet in bullets:
+            if math.hypot(alien[0] - bullet[0], alien[1] - bullet[1]) < 15:
+                aliens.remove(alien)
+                bullets.remove(bullet)
+                aliens_killed += 1
+                break
+
+    # Colisiones entre aliens y jugador
+    for alien in aliens:
+        if math.hypot(alien[0] - player_pos[0], alien[1] - player_pos[1]) < 20:
+            player_health -= 20
+            aliens.remove(alien)
+
+    # Aliens fuera de la pantalla
+    for alien in aliens:
+        if alien[0] < 0 or alien[0] > WIDTH or alien[1] < 0 or alien[1] > HEIGHT:
+            player_health -= 1
+            aliens.remove(alien)
+
+    # Dibujar
+    screen.fill(BLACK)
+    screen.blit(planet_img, (WIDTH // 2 - 25, HEIGHT // 2 - 25))
+    screen.blit(player_img, player_pos)
+    for bullet in bullets:
+        screen.blit(bullet_img, bullet)
+    for alien in aliens:
+        screen.blit(alien_img, (alien[0] - 10, alien[1] - 10))
+
+    # Mostrar vida del jugador
+    font = pygame.font.SysFont(None, 36)
+    health_text = font.render(f'Vida: {player_health}', True, WHITE)
+    screen.blit(health_text, (10, 10))
+
+    # Mostrar cantidad de aliens matados
+    aliens_text = font.render(f'Aliens matados: {aliens_killed}', True, WHITE)
+    screen.blit(aliens_text, (10, 50))
 
     pygame.display.flip()
-    clock.tick(fps)
+    clock.tick(60)
+
+    # Verificar si el jugador ha perdido
+    if player_health <= 0:
+        running = False
+
+    # Verificar si el jugador ha ganado
+    if aliens_killed >= aliens_to_win:
+        running = False
+
+pygame.quit()
+
+# Mostrar mensaje de victoria o derrota
+if player_health <= 0:
+    print("¡Has perdido!")
+else:
+    print("¡Has ganado!")
+ 

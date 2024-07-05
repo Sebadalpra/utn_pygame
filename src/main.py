@@ -9,7 +9,7 @@ pygame.init()
 
 # El modulo display de pygame nos crea una pantalla
 SCREEN = pygame.display.set_mode((SIZE_SCREEN))
-pygame.display.set_caption("Primer juego")
+pygame.display.set_caption("Defiende el Universo!")
 
 
 
@@ -48,11 +48,17 @@ while is_running:
         player_y += player_speed
 
     # Limitar el movimiento del jugador a los bordes de la pantalla
-    player_x = max(0, min(WIDTH - player_size, player_x))
-    player_y = max(0, min(HEIGHT - player_size, player_y))
+    player_x = max(0, min(WIDTH - player_width, player_x))
+    player_y = max(0, min(HEIGHT - player_height, player_y))
 
+    # color de pantalla
     SCREEN.fill((BLUE))
-    pygame.draw.rect(SCREEN, RED, (player_x, player_y, player_size, player_size))
+    # representar un pj en la pantalla
+    player = pygame.draw.rect(SCREEN, RED, (player))
+
+    # Planeta
+    planet = pygame.draw.circle(SCREEN, BLACK, (CENTER_SCREEN), 60)
+    player.center = CENTER_SCREEN
     
 # previo pinte color en memoria y con el flip lo muestra.
     pygame.display.flip()

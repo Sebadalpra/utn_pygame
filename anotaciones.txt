@@ -1,0 +1,6 @@
+Hay que guardar un dato que se pueda recuperar la proxima vez que se abre el juego. Ej: si guarde el volumen en 7 la prox vez tiene q lo abra tiene q estar en 7, cantidad de vidas o si por ej silencie la musica, modo oscuro y claro, etc.
+Ej: guardar en un json el score y en el csv la musica prendida o apagada.
+Todo en un archivo csv y otro en json
+
+
+# objetivo, que los enemys salgan del medio del planeta a posicioens reandom

@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+from random import randint
 
 class Player:
     def __init__(self, x, y) -> None:    
@@ -9,7 +10,8 @@ class Player:
         self.height = 30
         self.speed = 5
         self.health = 100
-        self.image = pygame.image.load("img/robot.png")
+        self.score = 0
+        self.image = pygame.image.load("./src/assets/img/robot.png")
         self.bullets = []
 
     def shoot(self):
@@ -27,12 +29,14 @@ class Enemy:
         self.y = y
         self.width = 30
         self.height = 30
-        self.speed = 2
+        self.dir_x = randint(-2, 2)  
+        self.dir_y = randint(1, 2)  
         self.health = 100
-        self.image = pygame.image.load("img/alien.png").convert_alpha()
+        self.image = pygame.image.load("./src/assets/img/alien.png").convert_alpha()
 
     def move(self):
-        self.y -= self.speed
+        self.y += self.dir_y
+        self.x += self.dir_x
 
     def draw(self):  
         SCREEN.blit(self.image, (self.x, self.y))
@@ -43,7 +47,7 @@ class Planet:
         self.y = y
         self.width = 250
         self.height = 250
-        self.image = pygame.image.load("img/marte.png")
+        self.image = pygame.image.load("./src/assets/img/marte.png")
 
     def draw(self):
         SCREEN.blit(self.image, (self.x, self.y))

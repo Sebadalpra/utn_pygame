@@ -4,3 +4,5 @@ Todo en un archivo csv y otro en json
 
 
 # objetivo, que los enemys salgan del medio del planeta a posicioens reandom
+
+CLASE 22 1h:34 -> COLISION CON MONEDAS A TRAVES DE LISTA COPIA Y ORIGINAL PARA REMOVER LAS MONEDAS 

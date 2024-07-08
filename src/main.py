@@ -17,7 +17,8 @@ pygame.mixer.init()
 pygame.mixer.music.load("./src/assets/music/interestellar_music.mp3")  
 pygame.mixer.music.play(-1)  
 pygame.mixer.music.set_volume(0.3)  
-playing_music = True
+playing_music = load_settings_csv()
+print(f"musica: {playing_music}")
 
 shoot_sound = pygame.mixer.Sound("./src/assets/sounds/sfx_laser2.ogg") 
 colision_sound = pygame.mixer.Sound("./src/assets/sounds/collision.ogg")
@@ -66,10 +67,15 @@ while is_running:
             elif event.key == pygame.K_m:
                 if playing_music:
                     pygame.mixer.music.pause()
+                    print(playing_music)
                 else:
                     pygame.mixer.music.unpause()
                 playing_music = not playing_music
+                save_settings_csv(playing_music)
                 
+    # Detectar booleano de csv
+    if playing_music == False:
+        pygame.mixer.music.pause()
     
     # ------ Funcionalidades
 
@@ -130,6 +136,6 @@ while is_running:
     if player.score >= 15 or player.health <= 0:
         is_running = False
 
-game_over_screen(player)
+final_screen(player)
 
 pygame.quit()

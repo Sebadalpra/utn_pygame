@@ -3,6 +3,7 @@ import sys
 import json
 import csv
 
+# ---------- FUNCIONES PARA TEXTO E IMAGENES ----------
 
 def cargar_y_escalar_imagen(ruta_imagen):
     """
@@ -42,6 +43,40 @@ def text_creator(text, font_size, color, position):
     text_surface = font.render(text, True, color)
     SCREEN.blit(text_surface, position)
 
+# ----------- CSV ----------
+
+def save_settings_csv(is_sound_on):
+    """
+    Guarda la configuración del sonido en un archivo CSV.
+
+    Args:
+        is_sound_on (bool): Estado del sonido (True si está encendido, False si está en mute).
+    """
+    with open("sound_settings.csv", mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(["Sound", "Status"])
+        writer.writerow(["Background_Music", "True" if is_sound_on else "False"])
+
+    print(f"Archivo modificado.")
+
+def load_settings_csv():
+    """
+    Carga la configuración del sonido desde un archivo CSV.
+
+    Returns:
+        bool: True si el sonido está encendido, False si está en mute.
+    """
+    try:
+        with open("sound_settings.csv", mode="r") as file:
+            reader = csv.reader(file)
+            next(reader)  # Saltar la primera fila (encabezado)
+            for row in reader:
+                return True if row[1] == "True" else False
+    except FileNotFoundError:
+        return True  # Valor predeterminado si el archivo no existe
+
+# ------------- MENU PRINCIPAL -----------
+
 def main_menu(play_sound):
     """
     Pantalla del menú principal.
@@ -69,6 +104,8 @@ def main_menu(play_sound):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+# ------------ JSON ------------------
 
 def save_score_json(player_name, score):
     """
@@ -104,7 +141,9 @@ def show_scores(top_scores):
         text_creator(f"{score['name']}: {score['score']}", 30, WHITE, (WIDTH // 2 - 75, posicion_y_inicial))
         posicion_y_inicial += 40
 
-def game_over_screen(player):
+# ------------- PANTALLA FINAL ------------
+
+def final_screen(player):
     """
     Pantalla de fin de juego donde se guarda el puntaje del jugador.
 
@@ -161,7 +200,7 @@ def game_over_screen(player):
                 else:
                     player_name += event.unicode
 
-
+# ----------- CREAR BOTONES ------------
 
 def draw_button(screen, text, x, y, width, height, inactive_color, active_color) -> bool:
     """

@@ -23,6 +23,7 @@ print(f"musica: {playing_music}")
 shoot_sound = pygame.mixer.Sound("./src/assets/sounds/sfx_laser2.ogg") 
 colision_sound = pygame.mixer.Sound("./src/assets/sounds/collision.ogg")
 confirmation_sound = pygame.mixer.Sound("./src/assets/sounds/confirmation.ogg")
+game_over_sound = pygame.mixer.Sound("./src/assets/sounds/game_over_sound.wav")
 
 # ---- Configuracion pantalla ----
 SCREEN = pygame.display.set_mode(SIZE_SCREEN)
@@ -92,16 +93,16 @@ while is_running:
     # Generar enemigos según el nivel
     if player.score >= 5:
         enemy.image = enemy2
-        object_creator(5, enemy_list, Enemy, WIDTH // 2 - 15, HEIGHT // 2 - 185)
+        object_creator(11, enemy_list, Enemy, WIDTH // 2 - 15, HEIGHT // 2 - 185)
         object_creator(3, star_list, Star, randint(0, 800), randint(0, 600))
         level = 2
     if player.score >= 10:
         enemy.image = enemy3
-        object_creator(6, enemy_list, Enemy, WIDTH // 2 - 15, HEIGHT // 2 - 185)
+        object_creator(12, enemy_list, Enemy, WIDTH // 2 - 15, HEIGHT // 2 - 185)
 
         level = 3  
     else: 
-        object_creator(7, enemy_list, Enemy, WIDTH // 2 - 15, HEIGHT // 2 - 185)
+        object_creator(10, enemy_list, Enemy, WIDTH // 2 - 15, HEIGHT // 2 - 185)
 
 
     # ---- Colisiones ----
@@ -141,6 +142,8 @@ while is_running:
     pygame.display.flip()
 
     if player.score >= 20 or player.health <= 0:
+        pygame.mixer.music.pause()
+        game_over_sound.play()
         is_running = False
 
 final_screen(player)

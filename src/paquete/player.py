@@ -3,6 +3,7 @@ from settings import *
 from paquete.clases import *
 
 # Mover player
+# Get_pressed me devuelve True cuando se apreto una flecha
 def player_movement(player):
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
@@ -26,7 +27,7 @@ def limit_player_screen(player):
         player.y = HEIGHT - player.height
 
 # Mover balas
-def move_bullets(player):
+def shoot(player):
     for bullet in player.bullets[:]:
         bullet.move()
         if bullet.y < 0:

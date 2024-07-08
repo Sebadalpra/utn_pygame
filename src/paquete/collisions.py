@@ -2,6 +2,13 @@ from paquete.enemys import enemy_list
 
 # Verificar colisiones
 def collisions_player_enemy(player, sound):
+    """
+    Verifica y maneja las colisiones entre el jugador y los enemigos.
+
+    Args:
+        player (obj): Objeto del jugador que contiene la posición y dimensiones.
+        sound (pygame.mixer.Sound): Sonido a reproducir al producirse una colisión.
+    """
     for enemy in enemy_list[:]:
         # Obtener las coordenadas y dimensiones del enemigo
         ex, ey, ew, eh = enemy.x, enemy.y, enemy.width, enemy.height
@@ -16,6 +23,13 @@ def collisions_player_enemy(player, sound):
             break
 
 def collisions_bullet_enemy(player, sound):
+    """
+    Verifica y maneja las colisiones entre las balas del jugador y los enemigos.
+
+    Args:
+        player (obj): Objeto del jugador que contiene las balas y los enemigos.
+        sound (pygame.mixer.Sound): Sonido a reproducir al producirse una colisión.
+    """
     for enemy in enemy_list[:]:
         enemy.move()
         

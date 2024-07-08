@@ -27,9 +27,9 @@ confirmation_sound = pygame.mixer.Sound("./src/assets/sounds/confirmation.ogg")
 SCREEN = pygame.display.set_mode(SIZE_SCREEN)
 
 # Cargar y escalar la imagen de fondo
-background_image = pygame.image.load("./src/assets/img/background-purple.png").convert()
-background_image = pygame.transform.scale(background_image, SIZE_SCREEN) 
-background_rect = background_image.get_rect()
+
+BACKGROUND_IMAGE, rect_game = cargar_y_escalar_imagen("./src/assets/img/background-purple.png")
+
 
 pygame.display.set_caption("Defiende el Universo!")
 
@@ -50,12 +50,7 @@ level = 1
 
 confirmation_played = False
 
-SCREEN.fill(BLACK)
-titles("screen1", "SALVA EL UNIVERSO!", WIDTH // 2 - 128, HEIGHT - 500, WHITE)
-pygame.display.flip()
-
-# Pantalla principal
-wait_user(K_SPACE)
+main_menu(confirmation_sound)
 
 while is_running:
     clock.tick(FPS)
@@ -111,7 +106,7 @@ while is_running:
 
     # -------- Dibujar elementos ------------
     # Fondo
-    SCREEN.blit(background_image, background_rect)
+    SCREEN.blit(BACKGROUND_IMAGE, rect_game)
 
     # Planeta
     planet.draw()
@@ -124,23 +119,17 @@ while is_running:
         enemy.draw()
 
 
-    if playing_music == False:
-        text_creator("sound_text", "Sonido" ,"MUTE", 550, GREEN)
+    if not playing_music:
+        text_creator("Sonido: MUTE", 36, GREEN, (10, 550))
 
-    text_creator("health_text", "Vida" ,player.health, 10, WHITE)
-    text_creator("score_text", "Score", player.score, 40, WHITE)
-    text_creator("level_text", "Nivel", level, 70, WHITE)
-
-
+    text_creator(f"Vida: {player.health}", 36, WHITE, (10, 10))
+    text_creator(f"Score: {player.score}", 36, WHITE, (10, 40))
+    text_creator(f"Nivel: {level}", 36, WHITE, (10, 70))
     pygame.display.flip()
 
     if player.score >= 15 or player.health <= 0:
         is_running = False
 
-SCREEN.fill(BLACK)
-pygame.mixer.music.pause()
-titles("game_over", "GAME OVER", WIDTH // 2 - 120, HEIGHT - 500, WHITE)
-pygame.display.flip()
-wait_user(K_SPACE)
+game_over_screen(player)
 
 pygame.quit()

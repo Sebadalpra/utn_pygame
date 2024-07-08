@@ -5,12 +5,23 @@ from random import randint
 enemy_list = []
 
 def enemy_creator(probability_number):
+    """
+    Crea un enemigo con una cierta probabilidad.
+
+    Args:
+        probability_number (int): Número que determina la probabilidad de creación del enemigo.
+        Se compara con un valor aleatorio entre 0 y 200.
+    """
     if randint(0, 200) <= probability_number:
         enemy = Enemy(WIDTH // 2 - 15, HEIGHT // 2 - 185)
         enemy_list.append(enemy)
 
 def enemy_out_screen(player):
-    """Resta 5 de vida cada vez que un enemigo sale de la pantalla
+    """
+    Reduce 5 de vida del jugador cuando un enemigo sale de la pantalla.
+
+    Args:
+        player (obj): Objeto del jugador que contiene la vida a reducir.
     """
     for enemy in enemy_list[:]:
         if enemy.x + enemy.width < 0 or enemy.x > 800 or enemy.y + enemy.height < 0 or enemy.y > 600:

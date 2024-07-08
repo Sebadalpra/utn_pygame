@@ -3,18 +3,19 @@ from paquete.clases import *
 from random import randint
 
 enemy_list = []
+star_list = []
 
-def enemy_creator(probability_number):
+def object_creator(probability_number, list, clase, x, y):
     """
-    Crea un enemigo con una cierta probabilidad.
+    Crea un enemigo/estrella con una cierta probabilidad.
 
     Args:
         probability_number (int): Número que determina la probabilidad de creación del enemigo.
         Se compara con un valor aleatorio entre 0 y 200.
     """
-    if randint(0, 200) <= probability_number:
-        enemy = Enemy(WIDTH // 2 - 15, HEIGHT // 2 - 185)
-        enemy_list.append(enemy)
+    if randint(0, 1000) <= probability_number:
+        variable = clase(x, y)
+        list.append(variable)
 
 def enemy_out_screen(player):
     """

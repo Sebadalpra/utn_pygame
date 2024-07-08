@@ -1,4 +1,4 @@
-from paquete.enemys import enemy_list
+from paquete.enemys import enemy_list, star_list
 
 # Verificar colisiones
 def collisions_player_enemy(player, sound):
@@ -21,6 +21,47 @@ def collisions_player_enemy(player, sound):
             enemy_list.remove(enemy)
             player.health -= 10  # Restar vida al jugador
             break
+
+def collisions_player_star(player, sound):
+    """
+    Verifica y maneja las colisiones entre el jugador y los enemigos.
+
+    Args:
+        player (obj): Objeto del jugador que contiene la posición y dimensiones.
+        sound (pygame.mixer.Sound): Sonido a reproducir al producirse una colisión.
+    """
+    for star in star_list[:]:
+        # Obtener las coordenadas y dimensiones del enemigo
+        sx, sy, sw, sh = star.x, star.y, star.width, star.height
+        # Obtener las coordenadas y dimensiones del jugador
+        px, py, pw, ph = player.x, player.y, player.width, player.height
+
+        # Verificar si hay colisión
+        if (px < sx + sw and px + pw > sx and py < sy + sh and py + ph > sy):
+            sound.play()
+            star_list.remove(star)
+            player.speed += 3
+            break
+
+def collisions_player_object(player, obj, list, sound):
+    """
+    Verifica y maneja las colisiones entre el jugador y los enemigos.
+
+    Args:
+        player (obj): Objeto del jugador que contiene la posición y dimensiones.
+        sound (pygame.mixer.Sound): Sonido a reproducir al producirse una colisión.
+    """
+    for obj in list[:]:
+        # Obtener las coordenadas y dimensiones del enemigo
+        obj.x, obj.y, obj.width, obj.height
+        # Obtener las coordenadas y dimensiones del jugador
+        px, py, pw, ph = player.x, player.y, player.width, player.height
+
+        # Verificar si hay colisión
+        if (px < obj.x + obj.width and px + pw > obj.x and py < obj.y + player.height and py + ph > obj.y):
+            sound.play()
+            list.remove(obj)
+        return True
 
 def collisions_bullet_enemy(player, sound):
     """

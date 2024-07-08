@@ -69,3 +69,14 @@ class Bullet:
         SCREEN.blit(self.image, (self.x - self.width // 2, self.y))
 
 
+class Star:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.width = 30
+        self.height = 30
+        self.image = pygame.image.load("./src/assets/img/star_gold.png").convert_alpha()
+        self.bullets = []
+
+    def draw(self):
+        SCREEN.blit(self.image, (self.x, self.y))

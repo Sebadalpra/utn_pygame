@@ -8,6 +8,7 @@ from paquete.modulo import *
 from random import randint
 import sys
 
+
 # Inicializacion
 pygame.init()
 
@@ -89,23 +90,26 @@ while is_running:
     shoot(player)
     
 
-    # Generar enemigos según el nivel
+    # Generar enemigos según el nivel 
     if player.score >= 5:
         enemy.image = enemy2
-        enemy_creator(2) 
+        object_creator(5, enemy_list, Enemy, WIDTH // 2 - 15, HEIGHT // 2 - 185)
+        object_creator(3, star_list, Star, randint(0, 800), randint(0, 600))
         level = 2
     if player.score >= 10:
         enemy.image = enemy3
-        enemy_creator(3) 
+        object_creator(6, enemy_list, Enemy, WIDTH // 2 - 15, HEIGHT // 2 - 185)
+
         level = 3  
     else: 
-        enemy_creator(1)
+        object_creator(7, enemy_list, Enemy, WIDTH // 2 - 15, HEIGHT // 2 - 185)
+
 
 
     # ---- Colisiones ----
     collisions_bullet_enemy(player, colision_sound)
-
-    collisions_player_enemy(player, colision_sound)
+    collisions_player_object(player, "enemy", enemy_list, colision_sound)
+    collisions_player_object(player, "star", star_list, colision_sound)
 
     # Restar vida cada vez que sale un enemigo de la screen
     enemy_out_screen(player)
@@ -123,6 +127,9 @@ while is_running:
     # Enemigos
     for enemy in enemy_list:
         enemy.draw()
+
+    for star in star_list:
+        star.draw()
 
 
     if not playing_music:

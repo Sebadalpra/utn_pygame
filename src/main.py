@@ -141,7 +141,7 @@ while is_running:
     text_creator(f"Nivel: {level}", 36, WHITE, (10, 70))
     pygame.display.flip()
 
-    if player.score >= 20 or player.health <= 0:
+    if player.health <= 0:
         pygame.mixer.music.pause()
         game_over_sound.play()
         is_running = False
